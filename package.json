@@ -4,16 +4,15 @@
   "engines": {
     "node": ">=12.0.0 <13.0.0"
   },
-  "description": "A collection of apps for WebCatalog",
+  "description": "A collection of apps for WebCatalog & Singlebox",
   "main": "script/build.js",
-  "author": "Quang Lam <quang.lam2807@gmail.com>",
+  "author": "Quang Lam <quang.lam@atomery.com>",
   "private": true,
   "scripts": {
     "install": "pip3 install --user -r requirements.txt",
     "test": "mocha --reporter min tests/human-data.js",
     "lint": "eslint ./tests ./scripts --ext js",
-    "build:pack:webcatalog": "cross-env APP_ID=webcatalog node scripts/pack.js",
-    "build:pack:singlebox": "cross-env APP_ID=singlebox node scripts/pack.js",
+    "build:pack": "node scripts/pack.js",
     "build:publish": "node scripts/publish.js"
   },
   "dependencies": {
@@ -30,12 +29,12 @@
     "yamljs": "0.3.0"
   },
   "devDependencies": {
-    "cross-env": "7.0.2",
     "eslint": "6.8.0",
     "eslint-config-airbnb": "18.2.0",
     "eslint-plugin-import": "2.22.0",
     "eslint-plugin-jsx-a11y": "6.3.1",
     "eslint-plugin-react": "7.20.3",
-    "eslint-plugin-react-hooks": "1.7.0"
+    "eslint-plugin-react-hooks": "1.7.0",
+    "tmp": "0.2.1"
   }
 }

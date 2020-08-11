@@ -5,59 +5,87 @@ const path = require('path');
 const sharp = require('sharp');
 const yaml = require('yamljs');
 const { exec } = require('child_process');
+const tmp = require('tmp');
 
 const apps = [];
 const appPath = path.join(__dirname, '../apps');
 const distPath = path.join(__dirname, '../dist');
 
-// Run concurrently to improve performance
+// Process each app one by one
 const maxConcurrent = 1;
 const maxQueue = Infinity;
 const queue = new Queue(maxConcurrent, maxQueue);
 
 const maskIconPyPath = path.join(__dirname, 'maskicon.py');
 
-const maskIconAsync = (iconPath) => new Promise((resolve, reject) => {
-  exec(`python3 ${maskIconPyPath} ${iconPath}`, (e, stdout, stderr) => {
+const maskIconAsync = (iconPath, iconDestPath) => new Promise((resolve, reject) => {
+  exec(`python3 ${maskIconPyPath} "${iconPath}" "${iconDestPath}"`, (e, stdout, stderr) => {
     if (e instanceof Error) {
       reject(e);
       return;
     }
 
-    // eslint-disable-next-line no-console
-    console.log(stdout.trim());
-
     resolve({ stdout, stderr });
   });
 });
 
-fs.readdirSync(appPath)
-  .filter((filename) => fs.statSync(path.join(appPath, filename)).isDirectory())
+const slugs = fs.readdirSync(appPath)
+  .filter((filename) => fs.statSync(path.join(appPath, filename)).isDirectory());
+
+let done = 0;
+
+slugs
   .forEach((slug) => {
     const yamlFile = path.join(appPath, `${slug}/${slug}.yml`);
-    const s3Url = process.env.APP_ID === 'singlebox' ? 'https://s3.singleboxapp.com' : 'https://s3.getwebcatalog.com';
+    const s3Url = 'https://storage.atomery.com/webcatalog/catalog';
     const app = {
       id: slug,
       objectID: slug,
       ...yaml.load(yamlFile),
-      icon: `${s3Url}/apps/${slug}/${slug}-icon.png`,
-      icon128: `${s3Url}/apps/${slug}/${slug}-icon-128.png`,
+      icon: `${s3Url}/${slug}/${slug}-icon.png`,
+      icon128: `${s3Url}/${slug}/${slug}-icon-128.webp`,
+      iconFilled: `${s3Url}/${slug}/${slug}-icon-filled.png`,
+      iconFilled128: `${s3Url}/${slug}/${slug}-icon-filled-128.webp`,
     };
 
     const iconName = `${slug}-icon.png`;
     const iconFile = path.join(appPath, slug, iconName);
-    const copiedIconFile = path.join(distPath, `${slug}/${slug}-icon.png`);
-
-    fs.copySync(iconFile, copiedIconFile);
+    // filled icon (original)
+    const filledCopiedIconFile = path.join(distPath, slug, `${slug}-icon-filled.png`);
+    // masked icon
+    const tmpMaskedCopiedIconFile = tmp.tmpNameSync();
+    const maskedCopiedIconFile = path.join(distPath, slug, `${slug}-icon.png`);
 
     queue.add(() => Promise.resolve()
-      .then(() => {
-        if (process.env.APP_ID === 'singlebox') return null;
-        return maskIconAsync(copiedIconFile);
-      })
-      .then(() => sharp(copiedIconFile)
+      .then(() => fs.ensureDir(path.join(distPath, slug)))
+      .then(() => sharp(iconFile)
+        .png()
+        .resize({
+          width: 1024,
+          height: 1024,
+          withoutEnlargement: true,
+        })
+        // reprocessed to ensure file size is optimized
+        .toFile(filledCopiedIconFile))
+      .then(() => sharp(filledCopiedIconFile)
+        // generate thumbnail
         .resize(128, 128)
-        .toFile(path.join(distPath, `${slug}/${slug}-icon-128.png`)))
+        .webp()
+        .toFile(path.join(distPath, `${slug}/${slug}-icon-filled-128.webp`)))
+      .then(() => maskIconAsync(iconFile, tmpMaskedCopiedIconFile))
+      .then(() => sharp(tmpMaskedCopiedIconFile)
+        .png()
+        // reprocessed to ensure file size is optimized
+        .toFile(maskedCopiedIconFile))
+      .then(() => sharp(maskedCopiedIconFile)
+        .resize(128, 128)
+        .webp()
+        .toFile(path.join(distPath, `${slug}/${slug}-icon-128.webp`)))
+      .then(() => {
+        done += 1;
+        // eslint-disable-next-line no-console
+        console.log(`Done ${slug} (${done}/${slugs.length})`);
+      })
       .catch((e) => {
         // eslint-disable-next-line
         console.log(e);

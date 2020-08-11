@@ -5,6 +5,7 @@ import os
 
 if __name__ == "__main__":
     icon_path = sys.argv[1]
+    icon_dest_path = sys.argv[2]
     dir = os.path.dirname(__file__)
     mask = Image.open(os.path.join(dir, 'mask.png'))
     foreground = Image.open(os.path.join(dir, 'foreground.png'))
@@ -16,5 +17,4 @@ if __name__ == "__main__":
     icon_processed.paste(icon_resized, box=(padding, padding))
 
     im = Image.composite(icon_processed, foreground, mask)
-    im.save(icon_path, 'png')
-    print('Saved {}'.format(icon_path))
+    im.save(icon_dest_path, 'png')

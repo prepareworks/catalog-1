@@ -1,4 +1,4 @@
-name: Catalog for WebCatalog
+name: Catalog
 
 on:
   push:
@@ -29,7 +29,7 @@ jobs:
     - run: yarn
     - run: yarn lint
     - run: yarn test
-    - run: yarn build:pack:webcatalog
+    - run: yarn build:pack
     - name: Upload icons to S3
       uses: jakejarvis/s3-sync-action@v0.5.1
       with:
@@ -45,6 +45,6 @@ jobs:
     - name: Push metadata to Algolia
       run: yarn build:publish
       env:
-        ALGOLIA_APPLICATION_ID: ${{ secrets.WEBCATALOG_ALGOLIA_APPLICATION_ID }}
-        ALGOLIA_ADMIN_KEY: ${{ secrets.WEBCATALOG_ALGOLIA_ADMIN_KEY }}
+        ALGOLIA_APPLICATION_ID: ${{ secrets.ALGOLIA_APPLICATION_ID }}
+        ALGOLIA_ADMIN_KEY: ${{ secrets.ALGOLIA_ADMIN_KEY }}
       if: github.event_name != 'pull_request'
