@@ -61,8 +61,8 @@ slugs
       .then(() => sharp(iconFile)
         .png()
         .resize({
-          width: 1024,
-          height: 1024,
+          width: 128,
+          height: 128,
           withoutEnlargement: true,
         })
         // reprocessed to ensure file size is optimized
