@@ -33,10 +33,11 @@ inquirer
     },
   ])
   .then((answers) => {
-    const {
-      name, url, icon, category,
-    } = answers;
-    const id = answers.id || answers.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
+    const name = answers.name.trim();
+    const url = answers.url.trim();
+    const category = answers.category.trim();
+    const icon = answers.icon.trim();
+    const id = answers.id.trim() || answers.name.toLowerCase().replace(/ /g, '-').replace(/[^\w-]+/g, '');
 
     (async () => {
       const destDirPath = path.resolve(__dirname, '..', 'apps', id);
@@ -59,10 +60,13 @@ inquirer
             .replace('jpg', 'png');
         }
         fs.writeFileSync(destIconPath, await download(iconUrl));
+      } else {
+        fs.ensureDirSync(destDirPath);
+        fs.copyFileSync(icon, destIconPath);
       }
 
       const yamlContent = yaml.stringify({
-        id, name, url, category,
+        name, url, category,
       });
       fs.writeFileSync(destYamlPath, yamlContent);
       console.log('Added app to', path.join('apps', id));
