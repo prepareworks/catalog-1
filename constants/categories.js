@@ -1,0 +1,25 @@
+const categories = [
+  'Business',
+  'Developer Tools',
+  'Education',
+  'Entertainment',
+  'Finance',
+  'Games',
+  'Graphics & Design',
+  'Health & Fitness',
+  'Lifestyle',
+  'Medical',
+  'Music',
+  'News',
+  'Photography',
+  'Productivity',
+  'Reference',
+  'Social Networking',
+  'Sports',
+  'Travel',
+  'Utilities',
+  'Video',
+  'Weather',
+];
+
+module.exports = categories;

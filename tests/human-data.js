@@ -11,31 +11,9 @@ const cleanDeep = require('clean-deep');
 const imageSize = require('image-size');
 const slugg = require('slugg');
 
-const { describe, it } = mocha;
+const categories = require('../constants/categories');
 
-const categories = [
-  'Business',
-  'Developer Tools',
-  'Education',
-  'Entertainment',
-  'Finance',
-  'Games',
-  'Graphics & Design',
-  'Health & Fitness',
-  'Lifestyle',
-  'Medical',
-  'Music',
-  'News',
-  'Photography',
-  'Productivity',
-  'Reference',
-  'Social Networking',
-  'Sports',
-  'Travel',
-  'Utilities',
-  'Video',
-  'Weather',
-];
+const { describe, it } = mocha;
 
 const slugs = fs.readdirSync(path.join(__dirname, '../apps'))
   .filter((filename) => fs.statSync(path.join(__dirname, `../apps/${filename}`)).isDirectory());
