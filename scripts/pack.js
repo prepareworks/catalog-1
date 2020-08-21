@@ -89,11 +89,11 @@ slugs
         .png()
         .toFile(path.join(distPath, `${slug}/${slug}-icon-128.png`)))
       .then(() => sharp(maskedCopiedIconFile)
-        .resize(128, 128)
+        .resize(256, 256)
         .webp()
         .toFile(path.join(distPath, `${slug}/${slug}-icon-256.webp`)))
       .then(() => sharp(maskedCopiedIconFile)
-        .resize(128, 128)
+        .resize(256, 256)
         .png()
         .toFile(path.join(distPath, `${slug}/${slug}-icon-256.png`)))
       .then(() => {
