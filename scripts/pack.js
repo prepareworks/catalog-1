@@ -45,6 +45,8 @@ slugs
       icon: `${s3Url}/${slug}/${slug}-icon.png`,
       icon128: `${s3Url}/${slug}/${slug}-icon-128.webp`,
       icon128Png: `${s3Url}/${slug}/${slug}-icon-128.png`,
+      icon256: `${s3Url}/${slug}/${slug}-icon-256.webp`,
+      icon256Png: `${s3Url}/${slug}/${slug}-icon-256.png`,
       iconFilled: `${s3Url}/${slug}/${slug}-icon-filled.png`,
       iconFilled128: `${s3Url}/${slug}/${slug}-icon-filled-128.webp`,
     };
@@ -86,6 +88,14 @@ slugs
         .resize(128, 128)
         .png()
         .toFile(path.join(distPath, `${slug}/${slug}-icon-128.png`)))
+      .then(() => sharp(maskedCopiedIconFile)
+        .resize(128, 128)
+        .webp()
+        .toFile(path.join(distPath, `${slug}/${slug}-icon-256.webp`)))
+      .then(() => sharp(maskedCopiedIconFile)
+        .resize(128, 128)
+        .png()
+        .toFile(path.join(distPath, `${slug}/${slug}-icon-256.png`)))
       .then(() => {
         done += 1;
         // eslint-disable-next-line no-console
