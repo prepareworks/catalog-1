@@ -53,8 +53,9 @@ inquirer
       if (icon.startsWith('http')) {
         let iconUrl = icon;
         if (icon.startsWith('https://apps.apple.com')) {
-          const appStoreId = parseInt(icon.match(/(\d+)/)[0], 10);
-          const appStoreData = await fetch(`https://itunes.apple.com/lookup?id=${appStoreId}`)
+          const appStoreId = parseInt(icon.split('/id')[1], 10);
+          const countryCode = icon.split('/')[3];
+          const appStoreData = await fetch(`https://itunes.apple.com/lookup?id=${appStoreId}&country=${countryCode}`)
             .then((res) => res.json());
           iconUrl = appStoreData.results[0].artworkUrl512
             .replace('jpg', 'png');
