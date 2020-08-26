@@ -80,11 +80,11 @@ describe('human-submitted app data', () => {
           return expect(dimensions.width).to.be.above(127);
         });
 
-        it('is not more than 1024px x 1024px', function () {
+        it('is not more than 4096px x 4096px', function () {
           if (!fs.existsSync(iconPath)) return this.skip();
 
           const dimensions = imageSize(iconPath);
-          return expect(dimensions.width).to.be.below(1025);
+          return expect(dimensions.width).to.be.below(2049);
         });
       });
     });

@@ -54,8 +54,7 @@ inquirer
         let iconUrl = icon;
         if (icon.startsWith('https://apps.apple.com')) {
           const appStoreId = parseInt(icon.split('/id')[1], 10);
-          const countryCode = icon.split('/')[3];
-          const appStoreData = await fetch(`https://itunes.apple.com/lookup?id=${appStoreId}&country=${countryCode}`)
+          const appStoreData = await fetch(`https://itunes.apple.com/lookup?id=${appStoreId}`)
             .then((res) => res.json());
           iconUrl = appStoreData.results[0].artworkUrl512
             .replace('jpg', 'png');
